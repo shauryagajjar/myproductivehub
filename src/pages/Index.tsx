@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Footer } from '@/components/layout/Footer';
+import { Dashboard } from '@/components/dashboard/Dashboard';
 import { TaskManager } from '@/components/tasks/TaskManager';
 import { PomodoroTimer } from '@/components/pomodoro/PomodoroTimer';
 import { NoteTaking } from '@/components/notes/NoteTaking';
@@ -10,16 +11,8 @@ import { QuickLinks } from '@/components/links/QuickLinks';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { Section } from '@/types';
 
-const sectionComponents: Record<Section, React.ComponentType> = {
-  tasks: TaskManager,
-  pomodoro: PomodoroTimer,
-  notes: NoteTaking,
-  habits: HabitTracker,
-  links: QuickLinks,
-};
-
 export default function Index() {
-  const [activeSection, setActiveSection] = useLocalStorage<Section>('productivity-section', 'tasks');
+  const [activeSection, setActiveSection] = useLocalStorage<Section>('productivity-section', 'dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Keyboard shortcuts
@@ -30,11 +23,12 @@ export default function Index() {
       }
 
       const sectionKeys: Record<string, Section> = {
-        '1': 'tasks',
-        '2': 'pomodoro',
-        '3': 'notes',
-        '4': 'habits',
-        '5': 'links',
+        '1': 'dashboard',
+        '2': 'tasks',
+        '3': 'pomodoro',
+        '4': 'notes',
+        '5': 'habits',
+        '6': 'links',
       };
 
       if (sectionKeys[e.key]) {
@@ -46,7 +40,24 @@ export default function Index() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setActiveSection]);
 
-  const ActiveComponent = sectionComponents[activeSection];
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'dashboard':
+        return <Dashboard onNavigate={setActiveSection} />;
+      case 'tasks':
+        return <TaskManager />;
+      case 'pomodoro':
+        return <PomodoroTimer />;
+      case 'notes':
+        return <NoteTaking />;
+      case 'habits':
+        return <HabitTracker />;
+      case 'links':
+        return <QuickLinks />;
+      default:
+        return <Dashboard onNavigate={setActiveSection} />;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -62,7 +73,7 @@ export default function Index() {
 
         <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
           <div className="max-w-5xl mx-auto">
-            <ActiveComponent />
+            {renderSection()}
           </div>
         </main>
       </div>

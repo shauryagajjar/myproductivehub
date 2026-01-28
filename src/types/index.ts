@@ -6,6 +6,8 @@ export interface Task {
   completed: boolean;
   priority: Priority;
   createdAt: string;
+  dueDate?: string;
+  description?: string;
 }
 
 export interface Note {
@@ -29,4 +31,9 @@ export interface QuickLink {
   icon?: string;
 }
 
-export type Section = 'tasks' | 'pomodoro' | 'notes' | 'habits' | 'links';
+export interface PomodoroStats {
+  sessions: number;
+  lastReset: string;
+}
+
+export type Section = 'dashboard' | 'tasks' | 'pomodoro' | 'notes' | 'habits' | 'links';
